@@ -1,0 +1,15 @@
+<h2>{{ note.title }}</h2>
+<p>Uploaded at: {{ note.uploaded_at }}</p>
+
+{% if questions %}
+  <ul>
+  {% for q in questions %}
+    <li>
+      <strong>Q:</strong> {{ q.text }} <br>
+      <strong>A:</strong> {{ q.answers.first.text }}
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>No questions generated yet.</p>
+{% endif %}

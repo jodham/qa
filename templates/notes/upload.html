@@ -1,0 +1,55 @@
+<html>
+<body>
+    <input type="file" id="pdfUpload">
+    <button onclick="uploadAndExtract()">Upload & Extract</button>
+
+    <pre id="qaOutput"></pre>
+
+    <script src="https://js.puter.com/v2/"></script>
+    <script>
+        async function uploadAndExtract() {
+            const fileInput = document.getElementById("pdfUpload");
+            if (!fileInput.files.length) return alert("Please select a file");
+
+            const formData = new FormData();
+            formData.append("pdf", fileInput.files[0]);
+
+            // 1. Upload to backend and get extracted text
+            const res = await fetch("/upload-pdf/", { method: "POST", body: formData });
+            const data = await res.json();
+            const text = data.text;
+
+            // 2. Prompt Puter with academic style
+            const prompt = `
+            You are given the text of an academic paper.
+            Your task is to create 5 meaningful and thoughtful Q&A pairs 
+            that test understanding of the paper's key concepts.
+
+            Guidelines:
+            - Base every question and answer strictly on the provided text.
+            - Do not add information that is not present in the text.
+            - Keep answers concise but accurate.
+            - Use this format only:
+            Q: <question>
+            A: <answer>
+
+            Academic Paper:
+            ${text}
+            `;
+
+
+            const response = await puter.ai.chat(prompt, { model: "gpt-5-nano" });
+
+            // 3. Show on frontend
+            document.getElementById("qaOutput").innerText = response;
+
+            // 4. Send back to backend to save
+            await fetch("/save-qa/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ qa_text: response })
+            });
+        }
+    </script>
+</body>
+</html>

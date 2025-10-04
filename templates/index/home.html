@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Academic Q&A Generator</title>
+</head>
+<body>
+    <h2>Upload PDF and Generate 5 Academic Q&A Pairs</h2>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label>Title:</label><br>
+        <input type="text" name="title" required><br><br>
+
+        <label>Upload PDF:</label><br>
+        <input type="file" name="pdf_file" accept="application/pdf" required><br><br>
+
+        <button type="submit">Upload & Extract</button>
+    </form>
+
+    <div id="loading" style="display:none;">⏳ Extracting and analyzing... please wait.</div>
+    <pre id="qaOutput"></pre>
+
+    <script>
+        document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            document.getElementById("loading").style.display = "block";
+            document.getElementById("qaOutput").innerText = "";
+
+            const formData = new FormData(e.target);
+
+            try {
+                // 1️⃣ Upload PDF and extract text
+                const uploadRes = await fetch("/upload-pdf/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const uploadData = await uploadRes.json();
+                if (uploadRes.status !== 200) {
+                    document.getElementById("qaOutput").innerText = JSON.stringify(uploadData, null, 2);
+                    document.getElementById("loading").style.display = "none";
+                    return;
+                }
+
+                console.log("✅ Upload complete, text extracted.");
+                const noteId = uploadData.note_id;
+                const text = uploadData.text;
+
+                // 2️⃣ Ask backend to generate Q&A via OpenRouter
+                const qaRes = await fetch("/generate-qa-fallback/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({ note_id: noteId, text: text })
+                });
+
+                const qaData = await qaRes.json();
+                document.getElementById("loading").style.display = "none";
+
+                if (qaRes.status !== 200) {
+                    document.getElementById("qaOutput").innerText = JSON.stringify(qaData, null, 2);
+                    return;
+                }
+
+                const qaText = qaData.qa_text || "";
+                document.getElementById("qaOutput").innerText = qaText;
+
+                // 3️⃣ Save generated Q&A to backend
+                console.log("💾 Saving Q&A to backend...");
+                const saveRes = await fetch("/save-qa/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        note_id: noteId,
+                        qa_text: qaText
+                    })
+                });
+
+                const saveData = await saveRes.json();
+
+                if (saveRes.status === 200) {
+                    console.log("✅ Q&A saved successfully:", saveData);
+                    alert("Questions and answers saved successfully!");
+                } else {
+                    console.error("❌ Save failed:", saveData);
+                    alert("Failed to save questions. Check console for details.");
+                }
+
+            } catch (err) {
+                document.getElementById("loading").style.display = "none";
+                document.getElementById("qaOutput").innerText = "❌ Error: " + err.message;
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>
