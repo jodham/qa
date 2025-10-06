@@ -3,8 +3,9 @@ import PyPDF2
 import pdfplumber
 from langchain_openai import ChatOpenAI
 from notesapp.models import QA
+import os
 
-OPENROUTER_API_KEY="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"
+OPENROUTER_API_KEY= os.environ.get("OPENROUTER_API_KEY")
 
 def extract_text_from_pdf(pdf_path):
     text = ""
