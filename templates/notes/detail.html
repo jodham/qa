@@ -1,15 +1,29 @@
-<h2>{{ note.title }}</h2>
-<p>Uploaded at: {{ note.uploaded_at }}</p>
+{% extends 'index/base.html' %}
 
-{% if questions %}
-  <ul>
-  {% for q in questions %}
-    <li>
-      <strong>Q:</strong> {{ q.text }} <br>
-      <strong>A:</strong> {{ q.answers.first.text }}
-    </li>
-  {% endfor %}
-  </ul>
-{% else %}
-  <p>No questions generated yet.</p>
-{% endif %}
+{% load static %}
+
+{% block title %}Home | My Site{% endblock %}
+
+{% block content %}
+
+    <h2>Note: {{ note.title }}</h2>
+    <h3>Q&A Pairs</h3>
+    <ul>
+        {% for qa in qas %}
+            <div class="qa-card" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: #f8f9fa; border-left: 4px solid #A01705;">
+              <div class="question" style="margin-bottom: 10px;">
+                <span style="color: #A01705; font-weight: bold;">Q:</span>
+                <span style="font-size: 1.1em;">{{ qa.question }}</span>
+              </div>
+              <div class="answer">
+                <span style="color: #28a745; font-weight: bold;">A:</span>
+                <span style="font-size: 1.05em;">{{ qa.answer }}</span>
+              </div>
+            </div>
+        {% empty %}
+            <li>No Q&A pairs available for this note.</li>
+        {% endfor %}
+    </ul>
+
+
+{% endblock %}

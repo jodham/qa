@@ -6,4 +6,6 @@ urlpatterns = [
     path("upload-pdf/", views.upload_pdf, name="upload_pdf"),      # API: POST only
     path("save-qa/", views.save_qa, name="save_qa"),               # API: POST
     path("generate-qa-fallback/", views.generate_qa_fallback, name="generate_qa_fallback"),
+    path("index/", views.index, name="index"),               # API: POST
+    path("note/<int:note_id>/", views.note_detail, name="note_detail"),  # detail view for a note
 ]

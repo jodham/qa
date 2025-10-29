@@ -25,7 +25,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("notesapp.urls")),
     # path("qa/", include("questionsapp.urls")),   # optional for future expansion
-    path("accounts/", include("django.contrib.auth.urls")),  # login/logout
+    path("auth/", include("django.contrib.auth.urls")),  # login/logout
+    path("accounts/", include("accountsapp.urls")),  # custom user management
     
 ]
 

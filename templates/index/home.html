@@ -1,21 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Academic Q&A Generator</title>
-</head>
-<body>
-    <h2>Upload PDF and Generate 5 Academic Q&A Pairs</h2>
+{% extends 'index/base.html' %}
 
+{% load static %}
+
+{% block title %}Home | My Site{% endblock %}
+
+{% block content %}
+    <div class="upload-container">
+    <h5>Upload Your Notes to generate Q&A</h5>
     <form id="uploadForm" enctype="multipart/form-data">
         {% csrf_token %}
-        <label>Title:</label><br>
-        <input type="text" name="title" required><br><br>
 
-        <label>Upload PDF:</label><br>
-        <input type="file" name="pdf_file" accept="application/pdf" required><br><br>
+        <div class="input-group">
+        <input type="text" name="title" placeholder="Enter document title..." required>
+        <input type="file" name="pdf_file" accept="application/pdf" required>
+        </div>
 
         <button type="submit">Upload & Extract</button>
     </form>
+    </div>
+ 
 
     <div id="loading" style="display:none;">⏳ Extracting and analyzing... please wait.</div>
     <pre id="qaOutput"></pre>
@@ -99,5 +102,5 @@
             }
         });
     </script>
-</body>
-</html>
+
+{% endblock %}

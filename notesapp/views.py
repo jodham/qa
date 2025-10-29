@@ -29,8 +29,17 @@ cloud_llm = ChatOpenAI(
 
 
 def upload_page(request):
-    return render(request, "index/home.html")
+    # fetch notes for user 
+    notes = Note.objects.filter(student=request.user).order_by('-id')
+    context = {"notes": notes}
+    return render(request, "index/home.html", context)
 
+def note_detail(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, student=request.user)
+    notes = Note.objects.filter(student=request.user).order_by('-id')
+    qas = note.qas.all()
+    context = {"note": note, "qas": qas, "notes": notes}
+    return render(request, "notes/detail.html", context)
 
 @login_required
 @require_POST
@@ -105,16 +114,16 @@ def generate_qa_fallback(request):
     note = get_object_or_404(Note, pk=note_id, student=request.user)
 
     prompt = f"""
-You are given the content of an academic paper below. Use ONLY the provided text — do NOT invent,
-add or assume facts not present in the text. Generate exactly 5 thoughtful Q&A pairs that test deep
-understanding of the paper's key ideas. Use this exact output format and nothing else:
+        You are given the content of an academic paper below. Use ONLY the provided text — do NOT invent,
+        add or assume facts not present in the text. Generate exactly 5 thoughtful Q&A pairs that test deep
+        understanding of the paper's key ideas. Use this exact output format and nothing else:
 
-Q: <question>
-A: <answer>
+        Q: <question>
+        A: <answer>
 
-Academic Paper:
-{text}
-"""
+        Academic Paper:
+        {text}
+    """
 
     try:
         response = cloud_llm.invoke(prompt)
@@ -134,3 +143,7 @@ Academic Paper:
         saved_ids.append(obj.id)
 
     return JsonResponse({"status": "ok", "qa_text": qa_text, "qa_ids": saved_ids})
+
+def index(request):
+
+    return render(request, 'index/index.html')
