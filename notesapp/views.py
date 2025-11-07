@@ -27,13 +27,14 @@ cloud_llm = ChatOpenAI(
     base_url=REMOTE_BASE_URL
 )
 
-
+@login_required(login_url='accounts/users/login/')
 def upload_page(request):
     # fetch notes for user 
     notes = Note.objects.filter(student=request.user).order_by('-id')
     context = {"notes": notes}
     return render(request, "index/home.html", context)
 
+@login_required(login_url='accounts/users/login/')
 def note_detail(request, note_id):
     note = get_object_or_404(Note, pk=note_id, student=request.user)
     notes = Note.objects.filter(student=request.user).order_by('-id')
@@ -41,7 +42,7 @@ def note_detail(request, note_id):
     context = {"note": note, "qas": qas, "notes": notes}
     return render(request, "notes/detail.html", context)
 
-@login_required
+@login_required(login_url='accounts/users/login/')
 @require_POST
 def upload_pdf(request):
     """
@@ -63,7 +64,7 @@ def upload_pdf(request):
     return JsonResponse({"note_id": note.id, "text": text})
 
 
-@login_required
+@login_required(login_url='accounts/users/login/')
 @require_POST
 def save_qa(request):
     """
@@ -94,7 +95,7 @@ def save_qa(request):
     return JsonResponse({"status": "saved", "qa_ids": saved_ids})
 
 
-@login_required
+@login_required(login_url='accounts/users/login/')
 @require_POST
 def generate_qa_fallback(request):
     """

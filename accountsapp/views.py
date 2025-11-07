@@ -3,12 +3,13 @@ from django.contrib import messages
 from .models import User  # Assuming you have a User model
 from .forms import UserForm, ProfileForm  
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 
-
+@login_required(login_url='accounts/users/login/')
 def user_list(request):
     users = User.objects.all()
     return render(request, 'user_list.html', {'users': users})
-
+@login_required(login_url='accounts/users/login/')
 def user_detail(request, user_id):
     user = get_object_or_404(User, id=user_id)
     return render(request, 'user_detail.html', {'user': user})
@@ -34,6 +35,7 @@ def user_register(request):
 
     return render(request, 'accounts/user_form.html', {'user_form': user_form, 'profile_form': profile_form})
 
+@login_required(login_url='accounts/users/login/')
 def user_edit(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -55,6 +57,7 @@ def user_edit(request, user_id):
         profile_form = ProfileForm(instance=user.profile)
 
     return render(request, 'accounts/user_form.html', {'user_form': user_form, 'profile_form': profile_form})
+@login_required(login_url='accounts/users/login/')
 def user_update(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
@@ -76,7 +79,7 @@ def user_update(request, user_id):
         profile_form = ProfileForm(instance=user.profile)
 
     return render(request, 'accounts/user_form.html', {'user_form': user_form, 'profile_form': profile_form})
-
+@login_required(login_url='accounts/users/login/')
 def user_delete(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if request.method == 'POST':
