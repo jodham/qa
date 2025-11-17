@@ -116,8 +116,8 @@ def generate_qa_fallback(request):
 
     prompt = f"""
         You are given the content of an academic paper below. Use ONLY the provided text — do NOT invent,
-        add or assume facts not present in the text. Generate exactly 5 thoughtful Q&A pairs that test deep
-        understanding of the paper's key ideas. Use this exact output format and nothing else:
+        add or assume facts not present in the text. Generate atleast 10 thoughtful Q&A pairs that test deep
+        understanding of the paper's key ideas.Don't repeat questions. Use this exact output format and nothing else:
 
         Q: <question>
         A: <answer>

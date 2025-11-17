@@ -1,29 +1,49 @@
 {% extends 'index/base.html' %}
-
 {% load static %}
 
 {% block title %}Home | My Site{% endblock %}
 
 {% block content %}
+<h2>Note: {{ note.title }}</h2>
+<h3>Q&A Pairs</h3>
 
-    <h2>Note: {{ note.title }}</h2>
-    <h3>Q&A Pairs</h3>
-    <ul>
-        {% for qa in qas %}
-            <div class="qa-card" style="margin-bottom: 20px; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background-color: #f8f9fa; border-left: 4px solid #A01705;">
-              <div class="question" style="margin-bottom: 10px;">
-                <span style="color: #A01705; font-weight: bold;">Q:</span>
-                <span style="font-size: 1.1em;">{{ qa.question }}</span>
-              </div>
-              <div class="answer">
-                <span style="color: #28a745; font-weight: bold;">A:</span>
-                <span style="font-size: 1.05em;">{{ qa.answer }}</span>
-              </div>
-            </div>
-        {% empty %}
-            <li>No Q&A pairs available for this note.</li>
-        {% endfor %}
-    </ul>
+<button id="download-pdf" class="btn btn-primary" style="margin-bottom: 15px;">
+  Download Q&A as PDF
+</button>
 
+<div id="qa-content">
+  <ul style="list-style: none; padding: 0; margin: 0;">
+    {% for qa in qas %}
+    <li>
+      <div class="qa-card" style="margin-bottom:20px; padding:15px; border-radius:8px;
+           box-shadow:0 2px 4px rgba(0,0,0,0.1); background:#f8f9fa; border-left:4px solid #A01705;">
+        <div class="question" style="margin-bottom:10px;">
+          <span style="color:#A01705; font-weight:bold;">Q:</span>
+          <span style="font-size:1.1em;">{{ qa.question }}</span>
+        </div>
+        <div class="answer">
+          <span style="color:#0A4A0A; font-weight:bold;">A:</span>
+          <span>{{ qa.answer }}</span>
+        </div>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.js"></script>
 
+<script>
+document.getElementById('download-pdf').addEventListener('click', function() {
+  const element = document.getElementById('qa-content');
+  const options = {
+    margin: 0.7,
+    filename: '{{ note.title|slugify }}-qa.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().from(element).set(options).save();
+});
+</script>
 {% endblock %}
