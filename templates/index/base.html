@@ -57,10 +57,21 @@
       </li><!-- End Dashboard Nav -->
       {% for note in notes %}
     
-        <a class="nav-link" href="{% url 'note_detail' note.id %}">
-          
-          <span class="">{{ note.title }}</span>
-        </a>
+        <li class="nav-item d-flex align-items-center">
+          <a class="nav-link" href="{% url 'note_detail' note.id %}">
+            <span>{{ note.title|truncatechars:20 }}</span>
+          </a>
+          <div class="dropdown"></div>
+            <button class="btn btn-sm btn-link p-0 me-2 text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item text-danger" href="{% url 'delete_note' note.id %}">Delete</a></li>
+            </ul>
+          </div>
+
+
+        </li>
       {% endfor %}
       
 

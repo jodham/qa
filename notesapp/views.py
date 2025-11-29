@@ -4,7 +4,7 @@ import json
 import logging
 from langchain_openai import ChatOpenAI
 from django.http import JsonResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 
@@ -13,7 +13,6 @@ from .models import Note, QA
 from .utils.pdf_parser import extract_text_from_pdf
 
 # OpenRouter / langchain client (same as your previous snippet)
-from langchain_openai import ChatOpenAI
 
 logger = logging.getLogger(__name__)
 
@@ -148,3 +147,9 @@ def generate_qa_fallback(request):
 def index(request):
 
     return render(request, 'index/index.html')
+
+@login_required(login_url='accounts/users/login/')
+def delete_note(request, note_id):
+    note = get_object_or_404(Note, pk=note_id, student=request.user)
+    note.delete()
+    return redirect('upload_page')

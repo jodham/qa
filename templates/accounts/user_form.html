@@ -80,6 +80,17 @@
                             </div>
                         {% endif %}
                     </div>
+                    <div class="mb-3 col-md-4">
+                        <label for="{{ user_form.confirm_password.id_for_label }}" class="form-label">
+                            {{ user_form.confirm_password.label }}
+                        </label>
+                        <p>{{ user_form.confirm_password }}</p>
+                        {% if user_form.confirm_password.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ user_form.confirm_password.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
 
                    
 
