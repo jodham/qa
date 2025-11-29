@@ -82,9 +82,29 @@
       </div>
 
       <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+        <label for="password" class="form-label">Password</label>
+        <div class="input-group">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Toggle password visibility">Show</button>
+        </div>
       </div>
+
+      <script>
+        (function () {
+          const pw = document.getElementById('password');
+          const btn = document.getElementById('togglePassword');
+          btn.addEventListener('click', function () {
+            if (pw.type === 'password') {
+              pw.type = 'text';
+              btn.textContent = 'Hide';
+            } else {
+              pw.type = 'password';
+              btn.textContent = 'Show';
+            }
+            btn.focus();
+          });
+        })();
+      </script>
 
       <button type="submit" class="btn btn-primary w-100 my-2">Login</button>
     </form>
