@@ -20,20 +20,16 @@ def user_register(request):
         profile_form = ProfileForm(request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
-            user = user_form.save(commit=False)
-            confirm_password = user_form.cleaned_data.get('confirm_password')
-            if user_form.cleaned_data['password'] != confirm_password:
-                user_form.add_error('confirm_password', 'Passwords do not match.')
-            else:
+                user = user_form.save(commit=False)
                 user.set_password(user_form.cleaned_data['password'])
                 user.save()
 
-            profile = profile_form.save(commit=False)
-            profile.user = user
-            profile.save()
-            messages.success(request, 'Registration successful. Please log in.')
+                profile = profile_form.save(commit=False)
+                profile.user = user
+                profile.save()
+                messages.success(request, 'Registration successful. Please log in.')
 
-            return redirect('login')
+                return redirect('login')
     else:
         user_form = UserForm()
         profile_form = ProfileForm()
